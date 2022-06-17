@@ -1,7 +1,6 @@
 package com.kobbi.util.numbercount
 
 import android.os.Bundle
-import android.util.Log
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -59,6 +58,7 @@ import com.kobbi.util.numbercount.ui.theme.Typography
 import kotlinx.coroutines.delay
 
 class MainActivity : ComponentActivity() {
+    private val mBackPressedCloser by lazy { BackPressedCloser(this) }
     private val viewModel: NumberViewModel =
         ViewModelProvider.NewInstanceFactory().create(NumberViewModel::class.java)
 
@@ -109,7 +109,7 @@ class MainActivity : ComponentActivity() {
         if (viewModel.editMode.value)
             viewModel.setEditMode()
         else
-            super.onBackPressed()
+            mBackPressedCloser.onBackPressed()
     }
 }
 
@@ -222,10 +222,6 @@ fun CountCard(
                                     countVm.setChecked(!checked.value)
                             },
                             onLongPress = {
-                                Log.e(
-                                    "####",
-                                    "Box.onLongPress() --> editMode : ${editMode.value}, locked : ${locked.value}"
-                                )
                                 if (!editMode.value && locked.value)
                                     countVm.setLocked(false)
                             }
